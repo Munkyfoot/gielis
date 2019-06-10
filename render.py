@@ -31,21 +31,21 @@ while True:
         a = 1
         b = 1
         n = random.randrange(0, 3)
-        n1 = random.randint(1, 4)
+        n1 = random.uniform(0.1, 3)
         if n == 0:
             n2 = n1
             n3 = n1
         elif n == 1:
-            n2 = random.randrange(1, 4)
+            n2 = random.uniform(0.1, 3)
             n3 = n2
         elif n == 2:
-            n2 = random.randint(1, 4)
-            n3 = random.randint(1, 4)
+            n2 = random.uniform(0.1, 3)
+            n3 = random.uniform(0.1, 3)
 
         m = random.randint(1, 8)
         LAST_TIME = time.time()
 
-    readout = "a: {}, b: {}, n1: {}, n2: {}, n3: {}, m: {}".format(
+    readout = "a: {:.2f}, b: {:.2f} n1: {:.2f} n2: {:.2f} n3: {:.2f} m: {}".format(
         a, b, n1, n2, n3, m)
     readout_time = "Next generation in {:.1f}...".format(
         WAIT_TIME - time_passed)
@@ -54,7 +54,7 @@ while True:
 
     for deg in range(360):
         phi = math.radians(deg)
-        scale = RESOLUTION * 0.25
+        scale = RESOLUTION * math.pow(0.25, 1 / (min(n1 + n2 + n3, 3) / 3))
 
         gielis = abs((1/a) * math.cos(m / 4 * phi)) * n2 + \
             abs((1/b) * math.sin(m / 4 * phi)) * n3
