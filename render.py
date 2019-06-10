@@ -49,12 +49,12 @@ while True:
         a, b, n1, n2, n3, m)
     readout_time = "Next generation in {:.1f}...".format(
         WAIT_TIME - time_passed)
-    first_point = None
-    recent_point = None
+
+    point_data = []
+    scale = RESOLUTION * 0.25
 
     for deg in range(360):
         phi = math.radians(deg)
-        scale = RESOLUTION * math.pow(0.25, 1 / (min(n1 + n2 + n3, 3) / 3))
 
         gielis = abs((1/a) * math.cos(m / 4 * phi)) * n2 + \
             abs((1/b) * math.sin(m / 4 * phi)) * n3
@@ -62,24 +62,31 @@ while True:
 
         r = 1/gielis * scale
 
-        x = CENTER[0] + int(math.cos(phi) * r)
-        y = CENTER[1] + int(math.sin(phi) * r)
+        x = math.cos(phi) * r
+        y = math.sin(phi) * r
 
         color_sin = (math.sin(cur_time + phi * math.pi) + 1) * 0.5
         color_cos = (math.cos(cur_time + phi * math.pi) + 1) * 0.5
         color = (int(255 * color_sin), 255 -
                  int(255 * color_sin), int(255 * color_cos))
 
-        if recent_point != None:
-            cv.line(img, recent_point, (x, y), color, 2, cv.LINE_AA)
+        point_data.append([(x, y), color])
 
-        if deg == 359:
-            cv.line(img, (x, y), first_point, color, 2, cv.LINE_AA)
+    max_coord = 0
+    for point, color in point_data:
+        max_coord = max(max_coord, max(abs(point[0]), abs(point[1])))
 
-        if deg == 0:
-            first_point = (x, y)
+    for i in range(len(point_data)):
+        point_data[i][0] = (CENTER[0] + int(point_data[i][0][0] / max_coord *
+                                            scale), CENTER[1] + int(point_data[i][0][1] / max_coord * scale))
 
-        recent_point = (x, y)
+    for i in range(len(point_data)):
+        if i < len(point_data) - 1:
+            cv.line(img, point_data[i][0], point_data[i + 1]
+                    [0], point_data[i][1], 2, cv.LINE_AA)
+        else:
+            cv.line(img, point_data[i][0], point_data[0]
+                    [0], point_data[0][1], 2, cv.LINE_AA)
 
     cv.putText(img, readout, (32, 32), cv.FONT_HERSHEY_SIMPLEX,
                0.5, (255, 255, 255), 1, cv.LINE_AA)
