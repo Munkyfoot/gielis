@@ -3,6 +3,7 @@ import sys
 import random
 import time
 import math
+import hashlib
 import numpy as np
 import cv2 as cv
 
@@ -11,7 +12,7 @@ CENTER = (RESOLUTION // 2, RESOLUTION // 2)
 
 START_TIME = time.time()
 LAST_TIME = time.time()
-WAIT_TIME = 3
+WAIT_TIME = 1
 
 a = 1
 b = 1
@@ -28,21 +29,21 @@ while True:
     time_passed = time.time() - LAST_TIME
 
     if time_passed >= WAIT_TIME:
-        a = 1
-        b = 1
+        a = random.uniform(0.1, 10)
+        b = random.uniform(0.1, 10)
         n = random.randrange(0, 3)
-        n1 = random.uniform(0.1, 3)
+        n1 = random.uniform(0.1, 10)
         if n == 0:
             n2 = n1
             n3 = n1
         elif n == 1:
-            n2 = random.uniform(0.1, 3)
+            n2 = random.uniform(0.1, 10)
             n3 = n2
         elif n == 2:
-            n2 = random.uniform(0.1, 3)
-            n3 = random.uniform(0.1, 3)
+            n2 = random.uniform(0.1, 10)
+            n3 = random.uniform(0.1, 10)
 
-        m = random.randint(1, 8)
+        m = random.randint(1, 10)
         LAST_TIME = time.time()
 
     readout = "a: {:.2f}, b: {:.2f} n1: {:.2f} n2: {:.2f} n3: {:.2f} m: {}".format(
@@ -86,7 +87,7 @@ while True:
                     [0], point_data[i][1], 2, cv.LINE_AA)
         else:
             cv.line(img, point_data[i][0], point_data[0]
-                    [0], point_data[0][1], 2, cv.LINE_AA)
+                    [0], point_data[i][1], 2, cv.LINE_AA)
 
     cv.putText(img, readout, (32, 32), cv.FONT_HERSHEY_SIMPLEX,
                0.5, (255, 255, 255), 1, cv.LINE_AA)
@@ -98,5 +99,11 @@ while True:
 
     if key == ord('q'):
         break
+
+    if key == ord('s'):
+        filedir = os.path.join(sys.path[0], 'saves')
+        save_count = len(os.listdir(filedir))
+        filename = "shape{}.jpg".format(save_count)
+        cv.imwrite(os.path.join(filedir, filename), img)
 
 cv.destroyAllWindows()
