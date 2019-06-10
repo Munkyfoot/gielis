@@ -28,12 +28,21 @@ while True:
     time_passed = time.time() - LAST_TIME
 
     if time_passed >= WAIT_TIME:
-        a = random.randint(1, 16)
-        b = random.randint(1, 16)
-        n1 = random.randint(1, 16)
-        n2 = random.randint(1, 16)
-        n3 = random.randint(1, 16)
-        m = random.randint(1, 16)
+        a = 1
+        b = 1
+        n = random.randrange(0, 3)
+        n1 = random.randint(1, 4)
+        if n == 0:
+            n2 = n1
+            n3 = n1
+        elif n == 1:
+            n2 = random.randrange(1, 4)
+            n3 = n2
+        elif n == 2:
+            n2 = random.randint(1, 4)
+            n3 = random.randint(1, 4)
+
+        m = random.randint(1, 8)
         LAST_TIME = time.time()
 
     readout = "a: {}, b: {}, n1: {}, n2: {}, n3: {}, m: {}".format(
@@ -62,10 +71,10 @@ while True:
                  int(255 * color_sin), int(255 * color_cos))
 
         if recent_point != None:
-            cv.line(img, recent_point, (x, y), color, 1, cv.LINE_AA)
+            cv.line(img, recent_point, (x, y), color, 2, cv.LINE_AA)
 
         if deg == 359:
-            cv.line(img, (x, y), first_point, color, 1, cv.LINE_AA)
+            cv.line(img, (x, y), first_point, color, 2, cv.LINE_AA)
 
         if deg == 0:
             first_point = (x, y)
