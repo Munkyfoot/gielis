@@ -3,11 +3,10 @@ import sys
 import random
 import time
 import math
-import hashlib
 import numpy as np
 import cv2 as cv
 
-RESOLUTION = 720
+RESOLUTION = 1080
 CENTER = (RESOLUTION // 2, RESOLUTION // 2)
 
 START_TIME = time.time()
@@ -68,6 +67,9 @@ while True:
             point_data[i][0] = (int(v * x + (1 - v) * px),
                                 int(v * y + (1 - v) * py))
 
+        cv.line(img, CENTER, point_data[i]
+                [0], (32, 32, 32), 1, cv.LINE_AA)
+
     for i in range(len(point_data)):
         if i < len(point_data) - 1:
             cv.line(img, point_data[i][0], point_data[i + 1]
@@ -104,6 +106,8 @@ while True:
 
     if PAUSE:
         readout_time += " PAUSED"
+
+    cv.imwrite(os.path.join(sys.path[0], 'cur.jpg'), img)
 
     cv.putText(img, readout, (24, 32), cv.FONT_HERSHEY_SIMPLEX,
                0.5, (255, 255, 255), 1, cv.LINE_AA)
