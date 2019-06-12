@@ -12,7 +12,9 @@ CENTER = (RESOLUTION // 2, RESOLUTION // 2)
 
 START_TIME = time.time()
 LAST_TIME = time.time()
-WAIT_TIME = 1
+WAIT_TIME = 1.5
+PAUSE = False
+PAUSE_TIME_REMAINING = 0
 
 a = 1
 b = 1
@@ -28,7 +30,9 @@ while True:
 
     time_passed = time.time() - LAST_TIME
 
-    if time_passed >= WAIT_TIME:
+    if PAUSE:
+        LAST_TIME = time.time() - PAUSE_TIME_REMAINING
+    elif time_passed >= WAIT_TIME:
         a = random.uniform(0.1, 10)
         b = random.uniform(0.1, 10)
         n = random.randrange(0, 3)
@@ -50,6 +54,9 @@ while True:
         a, b, n1, n2, n3, m)
     readout_time = "Next generation in {:.1f}...".format(
         WAIT_TIME - time_passed)
+
+    if PAUSE:
+        readout_time += " PAUSED"
 
     point_data = []
     scale = RESOLUTION * 0.25
@@ -89,9 +96,13 @@ while True:
             cv.line(img, point_data[i][0], point_data[0]
                     [0], point_data[i][1], 2, cv.LINE_AA)
 
-    cv.putText(img, readout, (32, 32), cv.FONT_HERSHEY_SIMPLEX,
+    cv.putText(img, readout, (24, 32), cv.FONT_HERSHEY_SIMPLEX,
                0.5, (255, 255, 255), 1, cv.LINE_AA)
-    cv.putText(img, readout_time, (32, 48), cv.FONT_HERSHEY_SIMPLEX,
+    cv.putText(img, readout_time, (24, 56), cv.FONT_HERSHEY_SIMPLEX,
+               0.5, (255, 255, 255), 1, cv.LINE_AA)
+    cv.putText(img, "Press 'P' to pause/play generation.", (24, img.shape[0] - 48), cv.FONT_HERSHEY_SIMPLEX,
+               0.5, (255, 255, 255), 1, cv.LINE_AA)
+    cv.putText(img, "Press 'S' to save shape to file.", (24, img.shape[0] - 24), cv.FONT_HERSHEY_SIMPLEX,
                0.5, (255, 255, 255), 1, cv.LINE_AA)
 
     cv.imshow('Gielis', img)
@@ -99,6 +110,13 @@ while True:
 
     if key == ord('q'):
         break
+
+    if key == ord('p'):
+        if PAUSE:
+            PAUSE = False
+        else:
+            PAUSE = True
+            PAUSE_TIME_REMAINING = time_passed
 
     if key == ord('s'):
         filedir = os.path.join(sys.path[0], 'saves')
